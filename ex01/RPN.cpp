@@ -4,10 +4,24 @@
 #include <stack>
 #include <iostream>
 
-RPN::RPN() {}
-RPN::RPN(const RPN&) {}
-RPN& RPN::operator =(const RPN&) { return *this; }
-RPN::~RPN() {}
+static	bool	binary_op(std::stack<int,std::list<int>> &stack, int (*op)(int, int))
+{
+	if (stack.size() < 2) {
+		std::cerr << "Error: missing operand for binary operator" << std::endl;
+		return true;
+	}
+	int a = stack.top();
+	stack.pop();
+	int b = stack.top();
+	stack.pop();
+	try {
+	stack.push(op(a,b));
+	return false;
+	} catch(std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return true;
+	}
+}
 
 std::tuple<bool,int>	RPN::calculate(const std::string input) {
 	std::stack<int,std::list<int>>	stack;
@@ -18,51 +32,26 @@ std::tuple<bool,int>	RPN::calculate(const std::string input) {
 				continue;
 			}
 			case '+': {
-				if (stack.size() < 2) {
-					std::cerr << "Error: missing operand for binary operator" << std::endl;
+				if (binary_op(stack, [](int a, int b){ return a + b; }))
 					return {true, 0};
-				}
-				int a = stack.top();
-				stack.pop();
-				int b = stack.top();
-				stack.pop();
-				stack.push(a + b);
 				break ;
 			}
 			case '-': {
-				if (stack.size() < 2) {
-					std::cerr << "Error: missing operand for binary operator" << std::endl;
+				if (binary_op(stack, [](int a, int b){ return a - b; }))
 					return {true, 0};
-				}
-				int a = stack.top();
-				stack.pop();
-				int b = stack.top();
-				stack.pop();
-				stack.push(a - b);
 				break ;
 			}
 			case '*': {
-				if (stack.size() < 2) {
-					std::cerr << "Error: missing operand for binary operator" << std::endl;
+				if (binary_op(stack, [](int a, int b){ return a * b; }))
 					return {true, 0};
-				}
-				int a = stack.top();
-				stack.pop();
-				int b = stack.top();
-				stack.pop();
-				stack.push(a * b);
 				break ;
 			}
 			case '/': {
-				if (stack.size() < 2) {
-					std::cerr << "Error: missing operand for binary operator" << std::endl;
+				if (binary_op(stack, [](int a, int b){
+						if (b == 0) throw std::range_error("division ill defined with divisor == 0");
+						return a / b;
+					}))
 					return {true, 0};
-				}
-				int a = stack.top();
-				stack.pop();
-				int b = stack.top();
-				stack.pop();
-				stack.push(a / b);
 				break ;
 			}
 			default: {
@@ -70,7 +59,7 @@ std::tuple<bool,int>	RPN::calculate(const std::string input) {
 					std::cerr << "Error: character is not a valid operand, space, or digit" << std::endl;
 					return {true, 0};
 				}
-				stack.push( c - '0');
+				stack.push(c - '0');
 			}
 		}
 	}

@@ -6,10 +6,11 @@
 
 class	RPN {
 public:
-	RPN();
-	RPN(const RPN&);
-	RPN& operator =(const RPN&);
-	virtual ~RPN();
+	RPN() = delete;
+	RPN(const RPN&) = delete;
+	RPN& operator =(const RPN&) = delete;
+	virtual ~RPN() = delete;
+	// No internal state, no instantiation!!!!
 
 	static std::tuple<bool,int>	calculate(const std::string);
 private:

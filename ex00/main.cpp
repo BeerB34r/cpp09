@@ -3,12 +3,11 @@
 #include <fstream>
 
 int	main(int ac, char **av) {
-	BitcoinExchange	wallStreet;
-
 	if (ac != 2) {
 		std::cerr << "USAGE: " << av[0] << " {input.txt}" << std::endl;
 		return 1;
 	}
+	BitcoinExchange	wallStreet;
 	std::ifstream	infile(av[1]);
 	if (infile.fail()) {
 		std::cerr << "Failed to open " << av[1] << std::endl;
