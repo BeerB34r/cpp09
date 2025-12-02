@@ -6,13 +6,14 @@
 
 class	PmergeMe {
 public:
-	PmergeMe();
-	PmergeMe(const PmergeMe&);
-	virtual PmergeMe& operator =(const PmergeMe&) = 0;
-	virtual ~PmergeMe() = 0;
+	PmergeMe() = delete;
+	PmergeMe(const PmergeMe&) = delete;
+	virtual PmergeMe& operator =(const PmergeMe&) = delete;
+	virtual ~PmergeMe() = delete;
+	// internal state's for suckas
 
-	void	sort(std::vector<int>&);
-	void	sort(std::deque<int>&);
+	static void	sort(std::vector<int>&);
+	static void	sort(std::deque<int>&);
 private:
 protected:
 };
