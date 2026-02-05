@@ -111,7 +111,7 @@ int	main(int ac, char **av) {
 		int i;
 		try {
 			i = std::stoi(s);
-			if (i < 0) {
+			if (i < 1) {
 				std::cerr << "PMergeMe requires a positive integer sequence only." << std::endl;
 				return (1);
 			}
