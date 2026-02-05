@@ -5,8 +5,8 @@
 #include <random>
 #include <chrono>
 
-#define elementCount 30
-#define maxNumWidth 2
+#define elementCount 10000
+#define maxNumWidth 9
 
 [[maybe_unused]] static void	_print_array(const std::deque<int>& nums, const std::string& name) {
 	std::cout.width(10);
@@ -25,32 +25,6 @@
 	std::cout << "]" << std::endl;
 }
 #define print_array(x) (_print_array(x, #x))
-
-int	random_seq(void) {
-	std::random_device	device; std::mt19937		twister(device()); std::uniform_int_distribution<std::mt19937::result_type>	rand(1, std::pow(10, maxNumWidth));
-
-	std::deque<int>	original;
-
-	for (unsigned int i = 0; i < elementCount; i++)
-		original.push_back(rand(twister));
-	std::deque<int>	pmerge = original;
-	PmergeMe::sort(pmerge);
-	std::cout << "pmerge is " << (std::is_sorted(pmerge.begin(), pmerge.end()) ? "" : "not ") << "sorted" << std::endl;
-	std::deque<int>	sorted = original;
-	std::sort(sorted.begin(), sorted.end());
-	bool	equal = true;
-	for (size_t i = 0; equal && i < sorted.size(); i++) {
-		equal = pmerge[i] == sorted[i];
-	}
-	if (!equal) {
-		std::cout << "some elements have been overridden" << std::endl;
-		print_array(sorted);
-		print_array(pmerge);
-		return (1);
-	}
-	else std::cout << "Everything seems alright!" << std::endl;
-	return (!std::is_sorted(pmerge.begin(), pmerge.end()));
-}
 
 std::chrono::duration<double,std::micro>	stopwatch(std::function<void()> fn) {
 	std::chrono::time_point start = std::chrono::high_resolution_clock::now();
@@ -76,7 +50,7 @@ int	test(std::deque<int> dq, std::vector<int> vec) {
 	std::cout.precision(9);
 	std::cout << stopwatch([&vec](){ PmergeMe::sort(vec); });
 	std::cout.precision();
-	std::cout << " μs" << std::endl;
+	std::cout << std::endl;
 	std::cout << "Time to process range of ";
 	std::cout.width(10);
 	std::cout << dq.size();
@@ -85,7 +59,7 @@ int	test(std::deque<int> dq, std::vector<int> vec) {
 	std::cout.precision(9);
 	std::cout << stopwatch([&dq](){ PmergeMe::sort(dq); });
 	std::cout.precision();
-	std::cout << " μs" << std::endl;
+	std::cout << std::endl;
 	PmergeMe::sort(dq);
 	PmergeMe::sort(vec);
 	for (size_t i = 0; i < reference.size(); i++) {
@@ -100,6 +74,21 @@ int	test(std::deque<int> dq, std::vector<int> vec) {
 	return 0;
 }
 
+int	random_seq(void) {
+	std::random_device	device;
+	std::mt19937		twister(device());
+	std::uniform_int_distribution<std::mt19937::result_type>	rand(1, std::pow(10, maxNumWidth));
+
+	std::deque<int>	original;
+
+	for (unsigned int i = 0; i < elementCount; i++) {
+		original.push_back(rand(twister));
+	}
+	std::vector<int>	vec(original.begin(), original.end());
+	std::deque<int>		dq(original.begin(), original.end());
+	return (test(dq, vec));
+}
+
 int	main(int ac, char **av) {
 	if (ac == 1)
 		return (random_seq());
@@ -111,7 +100,7 @@ int	main(int ac, char **av) {
 		int i;
 		try {
 			i = std::stoi(s);
-			if (i < 1) {
+			if (i < 0) {
 				std::cerr << "PMergeMe requires a positive integer sequence only." << std::endl;
 				return (1);
 			}
