@@ -15,8 +15,8 @@ static	bool	binary_op(std::stack<int,std::list<int>> &stack, int (*op)(int, int)
 	int b = stack.top();
 	stack.pop();
 	try {
-	stack.push(op(a,b));
-	return false;
+		stack.push(op(a,b));
+		return false;
 	} catch(std::exception &e) {
 		std::cerr << e.what() << std::endl;
 		return true;

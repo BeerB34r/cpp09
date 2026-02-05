@@ -14,6 +14,7 @@ public:
 
 	static void	sort(std::vector<int>&);
 	static void	sort(std::deque<int>&);
+	static std::size_t	jacobsthalSequence(std::size_t n);
 private:
 protected:
 };
