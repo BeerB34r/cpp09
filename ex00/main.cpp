@@ -7,6 +7,13 @@ int	main(int ac, char **av) {
 		std::cerr << "USAGE: " << av[0] << " {input.txt}" << std::endl;
 		return 1;
 	}
+	try {
+		BitcoinExchange	wallStreet;
+	}
+	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return (1);
+	}
 	BitcoinExchange	wallStreet;
 	std::ifstream	infile(av[1]);
 	if (infile.fail()) {
