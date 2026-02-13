@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 
@@ -30,7 +31,7 @@ BitcoinExchange::~BitcoinExchange() {
 }
 
 float	BitcoinExchange::getPrice(std::string timestring, float balance) {
-	if (balance < 1)
+	if (balance <= 0)
 		throw std::invalid_argument("balance must be positive, non-zero value");
 	if (balance > 1000)
 		throw std::invalid_argument("balance must be less than 1000");
@@ -42,7 +43,8 @@ float	BitcoinExchange::getPrice(std::string timestring, float balance) {
 	if (iss.fail())
 		throw std::invalid_argument("failed to parse \"" + timestring + "\"");
 
-	std::size_t	key = timestamp.tm_year * 10000 + timestamp.tm_mon * 100 + timestamp.tm_mday;
+	if (timestamp.tm_year > std::numeric_limits<int>::max() - 1900) throw std::out_of_range("provided timestamp is from the far-flung future");
+	std::size_t	key = (timestamp.tm_year + 1900) * 10000 + timestamp.tm_mon * 100 + timestamp.tm_mday;
 
 	auto it = database.upper_bound(key);
 	if (it == database.begin())
@@ -66,7 +68,8 @@ std::map<std::size_t,float>	BitcoinExchange::openDatabase(std::string path) {
 		iss >> std::get_time(&timestamp, "%Y-%m-%d");
 		if (iss.fail())
 			throw std::runtime_error("formatting error in database: " + current);
-		std::size_t	key = timestamp.tm_year * 10000 + timestamp.tm_mon * 100 + timestamp.tm_mday;
+		if (timestamp.tm_year > std::numeric_limits<int>::max() - 1900) throw std::out_of_range("database timestamp is from the far-flung future");
+		std::size_t	key = (timestamp.tm_year + 1900) * 10000 + timestamp.tm_mon * 100 + timestamp.tm_mday;
 		float	value = std::stof(current.substr(current.find(',') + 1));
 		bool	success;
 		std::tie(std::ignore, success) = out.insert(std::pair<std::size_t, float>(key, value));
