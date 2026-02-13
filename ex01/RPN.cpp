@@ -15,7 +15,7 @@ static	bool	binary_op(std::stack<int,std::list<int>> &stack, int (*op)(int, int)
 	int b = stack.top();
 	stack.pop();
 	try {
-		stack.push(op(a,b));
+		stack.push(op(b,a));
 		return false;
 	} catch(std::exception &e) {
 		std::cerr << e.what() << std::endl;
@@ -48,7 +48,7 @@ std::tuple<bool,int>	RPN::calculate(const std::string input) {
 			}
 			case '/': {
 				if (binary_op(stack, [](int a, int b){
-						if (b == 0) throw std::range_error("division ill defined with divisor == 0");
+						if (b == 0) throw std::range_error("Error: division ill defined with divisor == 0");
 						return a / b;
 					}))
 					return {true, 0};

@@ -3,8 +3,10 @@
 #include <iostream>
 
 int	main(int ac, char **av) {
-	if (ac != 2)
+	if (ac != 2) {
+		std::cerr << "Usage: " << av[0] << "\"<RPN string>\""  << std::endl;
 		return 1;
+	}
 	bool	err;
 	int		out;
 
